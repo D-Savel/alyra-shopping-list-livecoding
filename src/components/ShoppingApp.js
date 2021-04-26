@@ -1,10 +1,11 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import ShoppingList from "./ShoppingList"
 import AddProductForm from "./AddProductForm"
 import AddPopularProduct from "./AddPopularProduct"
 
 const ShoppingApp = () => {
-  const [shopping, setShopping] = useState(["curry", "cumin", "café"])
+  const getInitialShopping = () => JSON.parse(window.localStorage.getItem("my-shopping-list")) || []
+  const [shopping, setShopping] = useState(getInitialShopping)
   const [filter, setFilter] = useState("")
   const addToShoppingList = (product) => {
     setShopping([...shopping, product])
@@ -14,6 +15,17 @@ const ShoppingApp = () => {
   const removeFromShoppingList = (product) => {
     setShopping(shopping.filter((el) => el !== product))
   }
+
+  useEffect(() => {
+    document.title =
+      shopping.length === 0
+        ? `Préparez vos courses`
+        : `${shopping.length} produit(s) sur votre liste des courses`
+  }, [shopping])
+
+  useEffect(() => {
+    window.localStorage.setItem("my-shopping-list", JSON.stringify(shopping))
+  }, [shopping])
 
   return (
     <main className="row">
